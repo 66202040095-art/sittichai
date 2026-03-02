@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exclusive Menu - Seafood Paradise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* สไตล์ปกติ (Light Mode) */
+    body { font-family: 'Anuphan', sans-serif; margin: 0; background: #fff; padding-bottom: 140px; transition: 0.3s; color: #1a1a1a; }
+    .header { padding: 20px; position: sticky; top:0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index:100; font-weight:700; font-size:1.2rem; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; transition: 0.3s; }
+    .back-btn { font-size: 1.8rem; margin-right: 15px; cursor: pointer; line-height: 1; }
+    .menu-list { padding: 10px 20px; }
+    .menu-item { display: flex; padding: 20px 0; border-bottom: 1px solid #f8f8f8; align-items: center; transition: 0.3s; }
+    .menu-info { flex: 1; padding-right: 20px; }
+    .menu-name { font-weight: 700; font-size: 1.1rem; color: #1a1a1a; margin-bottom: 4px; transition: 0.3s; }
+    .menu-desc { font-size: 0.8rem; color: #888; margin-bottom: 8px; line-height: 1.4; }
+    .menu-price { font-weight: 700; font-size: 1rem; color: #00b14f; }
+    .img-box { position: relative; width: 110px; height: 110px; }
+    .menu-img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
+    .add-btn { position: absolute; bottom: -5px; right: -5px; background: #1a1a1a; color: white; border-radius: 12px; padding: 8px 12px; font-weight: 700; border: none; cursor: pointer; }
+
+    /* สไตล์สำหรับโหมดมืด (Dark Mode) */
+    body.dark-mode { background: #121212; color: #e0e0e0; }
+    .dark-mode .header { background: rgba(18, 18, 18, 0.95); border-bottom-color: #333; color: white; }
+    .dark-mode .menu-item { border-bottom-color: #222; }
+    .dark-mode .menu-name { color: white; }
+    .dark-mode .menu-desc { color: #aaa; }
+    .dark-mode .add-btn { background: #00b14f; }
+
+    .checkout-bar { position: fixed; bottom: 30px; left: 20px; right: 20px; background: #1a1a1a; border-radius: 20px; padding: 20px; display: none; align-items: center; justify-content: space-between; color: white; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .checkout-btn { background: #00b14f; color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+  </style>
+</head>
+<body id="menuPage">
+  <div class="header">
+    <span class="back-btn" onclick="location.href='index.html'">‹</span>
+    Luxury Menu
+  </div>
+
+  <div class="menu-list" id="menu-container"></div>
+
+  <div id="checkoutBar" class="checkout-bar">
+    <div>
+      <div style="font-size: 0.8rem; opacity: 0.6;">ยอดรวม</div>
+      <div id="totalPrice" style="font-size: 1.2rem; font-weight: 700;">฿0</div>
+    </div>
+    <button class="checkout-btn" onclick="goToCheckout()">ชำระเงิน</button>
+  </div>
+
+  <script>
+    // ตรวจสอบ Dark Mode ทันทีที่โหลดหน้า
+    if (localStorage.getItem('darkMode') === 'enabled') {
+      document.body.classList.add('dark-mode');
+    }
+
+    const products = [
+      { name: "Lobster Thermidor", price: 2450, desc: "ล็อบสเตอร์ยักษ์อบชีสและซอสไวน์ขาว", img: "https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=400" },
+      { name: "Premium King Crab", price: 3800, desc: "ปูยักษ์อลาสก้านึ่งสดใหม่คัดพิเศษ", img: "https://blog.hungryhub.com/wp-content/uploads/2021/11/RackMultipart20190617-30379-15szibz-768x513.jpg" },
+      { name: "Snow Fish Truffle", price: 950, desc: "ปลาหิมะย่างซอสทรัฟเฟิล หอมนุ่ม", img: "https://img.wongnai.com/p/1968x0/2022/04/23/84c5f66f1a844e0286f51bb5ce4643d0.jpg" },
+      { name: "Abalone XO Sauce", price: 1890, desc: "หอยเป๋าฮื้อตุ๋นซอส XO เกรดพรีเมียม", img: "https://pingpo555.wordpress.com/wp-content/uploads/2011/10/1.jpg" }
+    ];
+
+    let total = 0;
+    const container = document.getElementById('menu-container');
+    
+    products.forEach(p => {
+      container.innerHTML += `
+        <div class="menu-item">
+          <div class="menu-info">
+            <div class="menu-name">${p.name}</div>
+            <div class="menu-desc">${p.desc}</div>
+            <div class="menu-price">฿${p.price.toLocaleString()}</div>
+          </div>
+          <div class="img-box">
+            <img src="${p.img}" class="menu-img">
+            <button class="add-btn" onclick="addToCart(${p.price})">ADD</button>
+          </div>
+        </div>
+      `;
+    });
+
+    function addToCart(price) {
+      total += price;
+      document.getElementById('checkoutBar').style.display = 'flex';
+      document.getElementById('totalPrice').innerText = '฿' + total.toLocaleString();
+      localStorage.setItem('tempTotal', total);
+    }
+
+    function goToCheckout() {
+      location.href = 'checkout.html';
+    }
+  </script>
+</body>
+</html>

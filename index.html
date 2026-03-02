@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Seafood Paradise - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Anuphan', sans-serif; margin: 0; background: #ffffff; color: #1a1a1a; padding-bottom: 90px; transition: 0.3s; }
+    
+    /* Global Dark Mode Style */
+    body.dark-mode { background: #121212; color: #e0e0e0; }
+    .dark-mode .header-top { background: #121212; }
+    .dark-mode .brand-name { color: #00b14f; }
+    .dark-mode .p-card { background: #1e1e1e; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .dark-mode .p-title { color: white; }
+
+    .header-top { padding: 25px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
+    .brand-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 1px; color: #004d26; cursor: pointer; text-decoration: none; }
+    .hero-premium { position: relative; margin: 15px 20px; height: 220px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); cursor: pointer; }
+    .hero-premium img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 20px; color: white; }
+    .section-header { padding: 25px 20px 15px; display: flex; justify-content: space-between; align-items: flex-end; }
+    .section-header h2 { margin: 0; font-size: 1.3rem; font-weight: 700; }
+    .view-all { color: #00b14f; font-weight: 500; text-decoration: none; font-size: 0.9rem; }
+    .premium-scroll { display: flex; overflow-x: auto; padding: 10px 20px; gap: 20px; scrollbar-width: none; }
+    .p-card { min-width: 220px; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; }
+    .p-card img { width: 100%; height: 160px; object-fit: cover; }
+    .p-info { padding: 15px; }
+    .p-title { font-weight: 700; margin-bottom: 5px; font-size: 1rem; }
+    .p-meta { font-size: 0.8rem; color: #888; }
+
+    .bottom-nav { position: fixed; bottom: 15px; left: 20px; right: 20px; background: #1a1a1a; border-radius: 30px; display: flex; padding: 12px 0; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000; }
+    .nav-item { flex: 1; text-align: center; color: #666; text-decoration: none; font-size: 0.7rem; }
+    .nav-item.active { color: #00b14f; }
+    .nav-icon { font-size: 1.3rem; display: block; margin-bottom: 3px; }
+  </style>
+</head>
+<body id="mainBody">
+  <div class="header-top">
+    <a href="index.html" class="brand-name">SEAFOOD PARADISE</a>
+    <div style="font-size: 1.4rem; cursor:pointer;" onclick="location.href='profile.html'">👤</div>
+  </div>
+
+  <div class="hero-premium" onclick="location.href='shop-menu.html'">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLFdOjusr2y3CQJueVKX43SC-MK1xMHL-PFQ&s" alt="Premium">
+    <div class="hero-overlay">
+      <span style="background: #00b14f; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700;">PROMOTION</span>
+      <h3 style="margin: 5px 0 0;">กุ้งแม่น้ำเผา ลด 20%</h3>
+      <p style="margin: 0; font-size: 0.8rem; opacity: 0.8;">เฉพาะสมาชิก Seafood Paradise เท่านั้น</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>เมนูแนะนำ</h2>
+    <a href="shop-menu.html" class="view-all">ดูทั้งหมด ›</a>
+  </div>
+
+  <div class="premium-scroll" id="top-rated"></div>
+
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-item active"><span class="nav-icon">🏠</span>Home</a>
+    <a href="shop-menu.html" class="nav-item"><span class="nav-icon">🍱</span>Menu</a>
+    <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+  </div>
+
+  <script>
+    // ตรวจสอบ Dark Mode ทันทีที่โหลด
+    if(localStorage.getItem('darkMode') === 'enabled') {
+      document.body.classList.add('dark-mode');
+    }
+
+    const data = [
+      { name: "กุ้งแม่น้ำเผา XXL", price: 1290, img: "https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=400" },
+      { name: "ปูม้านึ่งคัดเกรด", price: 850, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8kt_EXzNLCx2sn3x9PmsCZfp_AlLGTfUqcg&s" }
+    ];
+    const container = document.getElementById('top-rated');
+    data.forEach(item => {
+      container.innerHTML += `
+        <div class="p-card" onclick="location.href='shop-menu.html'">
+          <img src="${item.img}">
+          <div class="p-info">
+            <div class="p-title">${item.name}</div>
+            <div class="p-meta">⭐ 4.9 • ฿${item.price.toLocaleString()}</div>
+          </div>
+        </div>`;
+    });
+  </script>
+</body>
+</html>
