@@ -2,104 +2,194 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ชำระเงิน - Seafood Paradise</title>
-  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Checkout - Seafood Paradise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Anuphan', sans-serif; margin: 0; background: #fdfdfd; padding: 20px; transition: 0.3s; color: #333; }
-    body.dark-mode { background: #121212; color: white; }
-    .header { display: flex; align-items: center; margin-bottom: 25px; }
-    .back-btn { font-size: 1.8rem; cursor: pointer; margin-right: 15px; }
-    
-    .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
-    .dark-mode .card { background: #1e1e1e; box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
-
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; opacity: 0.8; }
-    .total-row { display: flex; justify-content: space-between; padding-top: 15px; border-top: 1px solid #eee; font-weight: 700; font-size: 1.2rem; color: #00b14f; }
-    
-    .payment-option { 
-      border: 2px solid #f0f0f0; border-radius: 15px; padding: 15px; display: flex; align-items: center; 
-      gap: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; 
-    }
-    .dark-mode .payment-option { border-color: #333; }
-    .payment-option.active { border-color: #00b14f; background: #f0fff4; }
-    .dark-mode .payment-option.active { background: #004d26; }
-
-    .pay-btn { 
-      width: 100%; padding: 18px; background: #00b14f; color: white; border: none; 
-      border-radius: 15px; font-weight: 700; font-size: 1.1rem; cursor: pointer; margin-top: 20px; 
+    :root {
+      --primary: #00b14f;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --border: #edf2f7;
     }
 
-    /* Loading Overlay */
-    #loader { 
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); 
-      display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
+    .dark-mode {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --text: #e2e8f0;
+      --border: #2d3748;
     }
-    .dark-mode #loader { background: rgba(18,18,18,0.95); }
-    .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #00b14f; border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    * { box-sizing: border-box; transition: background 0.3s, color 0.3s; }
+    body { font-family: 'Anuphan', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 40px; }
+
+    .header { 
+      padding: 20px; display: flex; align-items: center; 
+      background: var(--card); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .back-btn { font-size: 1.5rem; cursor: pointer; margin-right: 15px; padding: 5px; }
+
+    .container { padding: 20px; max-width: 500px; margin: 0 auto; }
+
+    .card { 
+      background: var(--card); border-radius: 20px; padding: 20px; 
+      margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+    /* Payment Methods */
+    .method-option {
+      display: flex; align-items: center; gap: 12px; padding: 15px;
+      border: 2px solid var(--border); border-radius: 16px; margin-bottom: 10px;
+      cursor: pointer; position: relative;
+    }
+    .method-option.active { border-color: var(--primary); background: rgba(0, 177, 79, 0.05); }
+    .method-icon { font-size: 1.4rem; width: 30px; text-align: center; }
+    .method-info b { display: block; font-size: 0.95rem; }
+    .method-info span { font-size: 0.8rem; opacity: 0.6; }
+
+    /* Summary */
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
+    .total-row { 
+      display: flex; justify-content: space-between; margin-top: 15px; 
+      padding-top: 15px; border-top: 1px dashed var(--border);
+      font-weight: 700; font-size: 1.2rem; color: var(--primary);
+    }
+
+    /* QR Modal */
+    .qr-container { 
+      display: none; text-align: center; padding: 20px; 
+      background: #fff; border-radius: 15px; margin-top: 10px;
+    }
+    .qr-img { width: 180px; height: 180px; margin-bottom: 10px; border: 4px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+
+    .pay-btn {
+      width: 100%; padding: 18px; background: var(--primary); color: white;
+      border: none; border-radius: 18px; font-weight: 700; font-size: 1.1rem;
+      cursor: pointer; box-shadow: 0 8px 20px rgba(0, 177, 79, 0.3);
+      margin-top: 10px;
+    }
+    .pay-btn:active { transform: scale(0.98); }
+
+    /* Loader */
+    #loader {
+      fixed: top 0 left 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+      position: fixed; top:0; left:0; display: none; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 1000; color: white;
+    }
+    .spinner {
+      width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3);
+      border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite;
+      margin-bottom: 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
-<body id="payPage">
+<body>
+
   <div id="loader">
     <div class="spinner"></div>
-    <p style="margin-top:20px; font-weight:700;">กำลังตรวจสอบยอดชำระ...</p>
+    <p>กำลังประมวลผลความปลอดภัย...</p>
   </div>
 
   <div class="header">
-    <div class="back-btn" onclick="history.back()">‹</div>
-    <h2 style="margin:0">ชำระเงิน</h2>
+    <div class="back-btn" onclick="history.back()">←</div>
+    <div style="font-weight: 700;">ชำระเงิน</div>
   </div>
 
-  <div class="card">
-    <div class="summary-row"><span>รายการอาหาร</span> <span id="foodPrice">฿0</span></div>
-    <div class="summary-row"><span>ค่าส่ง (Express)</span> <span>฿60</span></div>
-    <div class="total-row"><span>ยอดชำระทั้งหมด</span> <span id="finalPrice">฿0</span></div>
-  </div>
+  <div class="container">
+    <div class="card">
+      <div class="section-title">📊 สรุปคำสั่งซื้อ</div>
+      <div class="summary-row">
+        <span>ค่าอาหาร</span>
+        <span id="subtotal">฿0</span>
+      </div>
+      <div class="summary-row">
+        <span>ค่าจัดส่ง (Premium Delivery)</span>
+        <span>฿60</span>
+      </div>
+      <div class="total-row">
+        <span>ยอดชำระสุทธิ</span>
+        <span id="grandTotal">฿0</span>
+      </div>
+    </div>
 
-  <h3 style="font-size: 1rem; margin-bottom: 15px;">ช่องทางชำระเงิน</h3>
-  <div class="payment-option active" onclick="setPay(this)">
-    <span style="font-size: 1.5rem;">💳</span>
-    <div>
-      <div style="font-weight:700;">บัตรเครดิต / เดบิต</div>
-      <div style="font-size: 0.7rem; opacity: 0.6;">Visa, Mastercard, JCB</div>
+    <div class="section-title">💳 เลือกวิธีชำระเงิน</div>
+    
+    <div class="method-option active" onclick="selectMethod(this, 'card')">
+      <div class="method-icon">💳</div>
+      <div class="method-info">
+        <b>บัตรเครดิต / เดบิต</b>
+        <span>Visa, Mastercard, JCB</span>
+      </div>
     </div>
-  </div>
-  <div class="payment-option" onclick="setPay(this)">
-    <span style="font-size: 1.5rem;">📱</span>
-    <div>
-      <div style="font-weight:700;">PromptPay / QR Code</div>
-      <div style="font-size: 0.7rem; opacity: 0.6;">สแกนเพื่อจ่ายทันที</div>
-    </div>
-  </div>
-  <div class="payment-option" onclick="setPay(this)">
-    <span style="font-size: 1.5rem;">💵</span>
-    <div>
-      <div style="font-weight:700;">เงินสดปลายทาง</div>
-      <div style="font-size: 0.7rem; opacity: 0.6;">ชำระเมื่อได้รับอาหาร</div>
-    </div>
-  </div>
 
-  <button class="pay-btn" onclick="processPayment()">ชำระเงินด้วยความปลอดภัย</button>
+    <div class="method-option" onclick="selectMethod(this, 'qr')">
+      <div class="method-icon">📱</div>
+      <div class="method-info">
+        <b>พร้อมเพย์ / Thai QR Pay</b>
+        <span>สแกนจ่ายผ่านแอปธนาคาร</span>
+      </div>
+    </div>
+
+    <div id="qrArea" class="qr-container">
+      <p style="color: #333; font-weight: 600; font-size: 0.9rem;">สแกนเพื่อชำระเงิน</p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SeafoodParadise-Payment" class="qr-img">
+      <p style="color: #666; font-size: 0.75rem;">ชื่อบัญชี: บจก. ซีฟู้ด พาราไดซ์</p>
+    </div>
+
+    <div class="method-option" onclick="selectMethod(this, 'cash')">
+      <div class="method-icon">💵</div>
+      <div class="method-info">
+        <b>ชำระเงินปลายทาง</b>
+        <span>จ่ายเมื่อได้รับสินค้า</span>
+      </div>
+    </div>
+
+    <button class="pay-btn" onclick="processOrder()">ยืนยันและชำระเงิน</button>
+  </div>
 
   <script>
-    if(localStorage.getItem('darkMode') === 'enabled') document.body.classList.add('dark-mode');
-
-    const total = parseInt(localStorage.getItem('tempTotal')) || 0;
-    document.getElementById('foodPrice').innerText = '฿' + total.toLocaleString();
-    document.getElementById('finalPrice').innerText = '฿' + (total + 60).toLocaleString();
-
-    function setPay(el) {
-      document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
-      el.classList.add('active');
+    // 1. ตรวจสอบ Dark Mode จากทุกหน้า
+    if(localStorage.getItem('darkMode') === 'enabled') {
+      document.body.classList.add('dark-mode');
     }
 
-    function processPayment() {
+    // 2. คำนวณราคาสุทธิ
+    const rawPrice = parseInt(localStorage.getItem('tempTotal')) || 0;
+    const shipping = 60;
+    const finalTotal = rawPrice + shipping;
+
+    document.getElementById('subtotal').innerText = '฿' + rawPrice.toLocaleString();
+    document.getElementById('grandTotal').innerText = '฿' + finalTotal.toLocaleString();
+
+    let currentMethod = 'card';
+
+    // 3. ฟังก์ชันเลือกวิธีชำระเงิน
+    function selectMethod(el, method) {
+      document.querySelectorAll('.method-option').forEach(opt => opt.classList.remove('active'));
+      el.classList.add('active');
+      currentMethod = method;
+
+      // แสดง/ซ่อน QR Code
+      const qrArea = document.getElementById('qrArea');
+      qrArea.style.display = (method === 'qr') ? 'block' : 'none';
+    }
+
+    // 4. ฟังก์ชันส่งคำสั่งซื้อ
+    function processOrder() {
       document.getElementById('loader').style.display = 'flex';
+
       setTimeout(() => {
-        alert('🎉 ชำระเงินสำเร็จ!\nคำสั่งซื้อของคุณถูกส่งไปยังเชฟแล้ว');
+        document.getElementById('loader').style.display = 'none';
+        alert('🎉 สั่งซื้อสำเร็จ!\nขอบคุณที่ใช้บริการ Seafood Paradise');
+        
+        // ล้างตะกร้าและกลับหน้าหลัก
         localStorage.removeItem('tempTotal');
-        location.href = 'index.html';
+        window.location.href = 'index.html';
       }, 2500);
     }
   </script>
